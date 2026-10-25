@@ -12,7 +12,8 @@ import NitroModules
 class HybridImage: HybridImageSpec, NativeImage {
   let uiImage: UIImage
 
-  init(uiImage: UIImage) {
+  init(uiImage: UIImage) throws {
     self.uiImage = uiImage
+    try super.init()
   }
 }

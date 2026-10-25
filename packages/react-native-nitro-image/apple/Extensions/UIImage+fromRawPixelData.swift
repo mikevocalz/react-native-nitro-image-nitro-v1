@@ -36,10 +36,10 @@ extension CGBitmapInfo {
     case .bgr:
       // Core Graphics has no 24-bit BGR format - byteOrder32Little has no effect
       // on 24-bit data. Callers must expand BGR to 32-bit BGRX first.
-      throw RuntimeError.error(withMessage: "Core Graphics does not support 24-bit BGR - expand the data to BGRX first!")
+      throw RuntimeError("Core Graphics does not support 24-bit BGR - expand the data to BGRX first!")
 
     case .unknown:
-      throw RuntimeError.error(withMessage: "Cannot initialize CGBitmapInfo with .unknown PixelFormat!")
+      throw RuntimeError("Cannot initialize CGBitmapInfo with .unknown PixelFormat!")
     }
   }
 }
@@ -51,11 +51,12 @@ extension CGBitmapInfo {
 private func expandBGRToBGRX(_ bgr: ArrayBuffer, width: Int, height: Int) throws -> ArrayBuffer {
   let pixelCount = width * height
   guard bgr.size >= pixelCount * 3 else {
-    throw RuntimeError.error(withMessage: "BGR buffer is too small! (Size: \(bgr.size), Expected: \(pixelCount * 3))")
+    throw RuntimeError("BGR buffer is too small! (Size: \(bgr.size), Expected: \(pixelCount * 3))")
   }
-  let bgrx = ArrayBuffer.allocate(size: pixelCount * 4)
-  let source = bgr.data
-  let destination = bgrx.data
+  let bgrx = ArrayBuffer.allocate(pixelCount * 4)
+  guard let source = bgr.data, let destination = bgrx.data else {
+    throw RuntimeError("Cannot access the pixel data of an empty ArrayBuffer!")
+  }
   for i in 0 ..< pixelCount {
     destination[i * 4]     = source[i * 3]     // B
     destination[i * 4 + 1] = source[i * 3 + 1] // G
@@ -68,7 +69,7 @@ private func expandBGRToBGRX(_ bgr: ArrayBuffer, width: Int, height: Int) throws
 extension CGDataProvider {
   static func fromArrayBuffer(_ arrayBuffer: ArrayBuffer) throws -> CGDataProvider {
     guard arrayBuffer.isOwner else {
-      throw RuntimeError.error(withMessage: "Cannot create CGDataProvider from a non-owning ArrayBuffer! Copy the buffer first to make it owning.")
+      throw RuntimeError("Cannot create CGDataProvider from a non-owning ArrayBuffer! Copy the buffer first to make it owning.")
     }
 
     class ArrayBufferHolder {
@@ -77,9 +78,12 @@ extension CGDataProvider {
         self.arrayBuffer = arrayBuffer
       }
     }
+    guard let bytes = arrayBuffer.data else {
+      throw RuntimeError("Cannot create CGDataProvider from an empty ArrayBuffer!")
+    }
     let holder = ArrayBufferHolder(arrayBuffer: arrayBuffer)
     let provider = CGDataProvider(dataInfo: Unmanaged.passRetained(holder).toOpaque(),
-                                  data: arrayBuffer.data,
+                                  data: bytes,
                                   size: arrayBuffer.size) { info, _, _ in
       guard let info else {
         fatalError("CGDataProvider releaseFunc called without a pointer to our ArrayBufferHolder!")
@@ -88,7 +92,7 @@ extension CGDataProvider {
       let _ = Unmanaged<ArrayBufferHolder>.fromOpaque(info).takeRetainedValue()
     }
     guard let provider else {
-      throw RuntimeError.error(withMessage: "Failed to create CGDataProvider from ArrayBuffer! (Size: \(arrayBuffer.size))")
+      throw RuntimeError("Failed to create CGDataProvider from ArrayBuffer! (Size: \(arrayBuffer.size))")
     }
     return provider
   }
@@ -128,7 +132,7 @@ extension UIImage {
       shouldInterpolate: false,
       intent: .defaultIntent
     ) else {
-      throw RuntimeError.error(withMessage: "Failed to create CGImage from the given RawPixelData! (Size: \(data.buffer.size), Format: \(data.pixelFormat))")
+      throw RuntimeError("Failed to create CGImage from the given RawPixelData! (Size: \(data.buffer.size), Format: \(data.pixelFormat))")
     }
 
     self.init(cgImage: cg, scale: 1.0, orientation: .up)

@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import UIKit
 import NitroModules
 
-class HybridImageFactory: HybridImageFactorySpec {
+final class HybridImageFactory: HybridImageFactorySpec {
   /**
    * Create new blank Image
    */
@@ -29,11 +30,11 @@ class HybridImageFactory: HybridImageFactorySpec {
       }
     }
     // 4. Wrap it in HybridImage
-    return HybridImage(uiImage: uiImage)
+    return try HybridImage(uiImage: uiImage)
   }
 
-  func createBlankImageAsync(width: Double, height: Double, enableAlpha: Bool, fill: Color?) throws -> Promise<any HybridImageSpec> {
-    return Promise.async {
+  func createBlankImageAsync(width: Double, height: Double, enableAlpha: Bool, fill: Color?) throws -> any Promise<any HybridImageSpec> {
+    return .async {
       return try self.createBlankImage(width: width, height: height, enableAlpha: enableAlpha, fill: fill)
     }
   }
@@ -44,12 +45,12 @@ class HybridImageFactory: HybridImageFactorySpec {
   func loadFromFile(filePath rawFilePath: String) throws -> any HybridImageSpec {
     let filePath = rawFilePath.normalizedFilePath
     guard let uiImage = UIImage(contentsOfFile: filePath) else {
-      throw RuntimeError.error(withMessage: "Failed to read image from file \"\(filePath)\"!")
+      throw RuntimeError("Failed to read image from file \"\(filePath)\"!")
     }
-    return HybridImage(uiImage: uiImage)
+    return try HybridImage(uiImage: uiImage)
   }
-  func loadFromFileAsync(filePath: String) throws -> Promise<any HybridImageSpec> {
-    return Promise.async {
+  func loadFromFileAsync(filePath: String) throws -> any Promise<any HybridImageSpec> {
+    return .async {
       return try self.loadFromFile(filePath: filePath)
     }
   }
@@ -59,12 +60,12 @@ class HybridImageFactory: HybridImageFactorySpec {
    */
   func loadFromResources(name: String) throws -> any HybridImageSpec {
     guard let uiImage = UIImage(named: name) else {
-      throw RuntimeError.error(withMessage: "Image \"\(name)\" cannot be found in main resource bundle!")
+      throw RuntimeError("Image \"\(name)\" cannot be found in main resource bundle!")
     }
-    return HybridImage(uiImage: uiImage)
+    return try HybridImage(uiImage: uiImage)
   }
-  func loadFromResourcesAsync(name: String) throws -> Promise<any HybridImageSpec> {
-    return Promise.async {
+  func loadFromResourcesAsync(name: String) throws -> any Promise<any HybridImageSpec> {
+    return .async {
       return try self.loadFromResources(name: name)
     }
   }
@@ -74,9 +75,9 @@ class HybridImageFactory: HybridImageFactorySpec {
    */
   func loadFromSymbol(symbolName: String) throws -> any HybridImageSpec {
     guard let uiImage = UIImage(systemName: symbolName) else {
-      throw RuntimeError.error(withMessage: "No Image with the symbol name \"\(symbolName)\" found!")
+      throw RuntimeError("No Image with the symbol name \"\(symbolName)\" found!")
     }
-    return HybridImage(uiImage: uiImage)
+    return try HybridImage(uiImage: uiImage)
   }
 
   /**
@@ -84,16 +85,16 @@ class HybridImageFactory: HybridImageFactorySpec {
    */
   func loadFromRawPixelData(data: RawPixelData, allowGpu _ : Bool?) throws -> any HybridImageSpec {
     let uiImage = try UIImage(fromRawPixelData: data)
-    return HybridImage(uiImage: uiImage)
+    return try HybridImage(uiImage: uiImage)
   }
 
-  func loadFromRawPixelDataAsync(data: RawPixelData, allowGpu: Bool?) throws -> Promise<any HybridImageSpec> {
+  func loadFromRawPixelDataAsync(data: RawPixelData, allowGpu: Bool?) throws -> any Promise<any HybridImageSpec> {
     let maybeBufferCopy = data.buffer.asOwning()
     let newData = RawPixelData(buffer: maybeBufferCopy,
                                width: data.width,
                                height: data.height,
                                pixelFormat: data.pixelFormat)
-    return Promise.async {
+    return .async {
       return try self.loadFromRawPixelData(data: newData, allowGpu: allowGpu)
     }
   }
@@ -104,18 +105,18 @@ class HybridImageFactory: HybridImageFactorySpec {
   func loadFromEncodedImageData(data: EncodedImageData) throws -> any HybridImageSpec {
     let copiedData = data.buffer.toData(copyIfNeeded: false)
     guard let uiImage = UIImage(data: copiedData) else {
-      throw RuntimeError.error(withMessage: "The given ArrayBuffer could not be converted to a UIImage!")
+      throw RuntimeError("The given ArrayBuffer could not be converted to a UIImage!")
     }
-    return HybridImage(uiImage: uiImage)
+    return try HybridImage(uiImage: uiImage)
   }
 
-  func loadFromEncodedImageDataAsync(data: EncodedImageData) throws -> Promise<any HybridImageSpec> {
+  func loadFromEncodedImageDataAsync(data: EncodedImageData) throws -> any Promise<any HybridImageSpec> {
     let copiedData = data.buffer.toData(copyIfNeeded: true)
-    return Promise.async {
+    return .async {
       guard let uiImage = UIImage(data: copiedData) else {
-        throw RuntimeError.error(withMessage: "The given ArrayBuffer could not be converted to a UIImage!")
+        throw RuntimeError("The given ArrayBuffer could not be converted to a UIImage!")
       }
-      return HybridImage(uiImage: uiImage)
+      return try HybridImage(uiImage: uiImage)
     }
   }
 
@@ -123,13 +124,13 @@ class HybridImageFactory: HybridImageFactorySpec {
   func loadFromThumbHash(thumbhash: ArrayBuffer) throws -> any HybridImageSpec {
     let data = thumbhash.toData(copyIfNeeded: false)
     let uiImage = thumbHashToImage(hash: data)
-    return HybridImage(uiImage: uiImage)
+    return try HybridImage(uiImage: uiImage)
   }
-  func loadFromThumbHashAsync(thumbhash: ArrayBuffer) throws -> Promise<any HybridImageSpec> {
+  func loadFromThumbHashAsync(thumbhash: ArrayBuffer) throws -> any Promise<any HybridImageSpec> {
     let data = thumbhash.toData(copyIfNeeded: true)
-    return Promise.async {
+    return .async {
       let uiImage = thumbHashToImage(hash: data)
-      return HybridImage(uiImage: uiImage)
+      return try HybridImage(uiImage: uiImage)
     }
   }
 }

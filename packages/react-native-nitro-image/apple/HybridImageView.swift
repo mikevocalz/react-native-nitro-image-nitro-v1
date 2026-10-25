@@ -10,12 +10,15 @@ import UIKit
 import NitroModules
 
 class HybridImageView: HybridNitroImageViewSpec {
-  let view = CustomImageView()
+  // Fabric creates Nitro views on the main thread.
+  let view: CustomImageView = MainActor.assumeIsolated { CustomImageView() }
   private var resetImageBeforeLoad = false
 
-  override init() {
-    super.init()
-    view.delegate = self
+  override init() throws {
+    try super.init()
+    MainActor.assumeIsolated {
+      view.delegate = self
+    }
   }
 
   var resizeMode: ResizeMode? {

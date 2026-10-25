@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import ImageIO
 import NitroModules
 import UniformTypeIdentifiers
 
-class HybridImageUtils: HybridImageUtilsSpec {
+final class HybridImageUtils: HybridImageUtilsSpec {
   var supportsHeicLoading: Bool {
     // Check if the type is supported by the OS
     let types = CGImageDestinationCopyTypeIdentifiers() as! [String]
@@ -31,7 +32,7 @@ class HybridImageUtils: HybridImageUtilsSpec {
 
   func thumbhashFromBase64String(thumbhashBase64: String) throws -> ArrayBuffer {
     guard let data = Data(base64Encoded: thumbhashBase64) else {
-      throw RuntimeError.error(withMessage: "The given ThumbHash (\(thumbhashBase64)) is not a valid Base64 encoded Hash!")
+      throw RuntimeError("The given ThumbHash (\(thumbhashBase64)) is not a valid Base64 encoded Hash!")
     }
     return try ArrayBuffer.copy(data: data)
   }

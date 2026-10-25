@@ -5,7 +5,7 @@
 //  Created by Marc Rousavy on 25.07.25.
 //
 
-import UIKit
+public import UIKit
 
 /**
  * A protocol that represents a native image view.

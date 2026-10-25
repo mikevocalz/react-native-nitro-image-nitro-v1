@@ -15,7 +15,7 @@ extension UIImage {
    */
   func toRawPixelData() throws -> RawPixelData {
     guard let cg = self.cgImage else {
-      throw RuntimeError.error(withMessage: "Failed to get Image's underlying cgImage!")
+      throw RuntimeError("Failed to get Image's underlying cgImage!")
     }
 
     let width = cg.width
@@ -33,7 +33,7 @@ extension UIImage {
        let sourceData = CFDataGetBytePtr(cfData) {
       // FAST PATH: Perform a direct copy if it's tightly packed memory
       assert(CFDataGetLength(cfData) == totalBytesSize, "CFData is not the same length as our computed size!")
-      let arrayBuffer = ArrayBuffer.allocate(size: totalBytesSize)
+      let arrayBuffer = ArrayBuffer.allocate(totalBytesSize)
       memcpy(arrayBuffer.data, sourceData, totalBytesSize)
 
       // Pixel format is any 4-character format
@@ -45,7 +45,7 @@ extension UIImage {
                           pixelFormat: format)
     } else {
       // SLOW PATH: Perform a draw into a BGRA buffer.
-      let arrayBuffer = ArrayBuffer.allocate(size: totalBytesSize)
+      let arrayBuffer = ArrayBuffer.allocate(totalBytesSize)
       
       // Create a RGB-premultiplied-first context (that's BGRA on iOS)
       let colorSpace = CGColorSpaceCreateDeviceRGB()
@@ -60,7 +60,7 @@ extension UIImage {
         space: colorSpace,
         bitmapInfo: bitmapInfo
       ) else {
-        throw RuntimeError.error(withMessage: "Failed to create CGContext for \(width)x\(height) RGBA Image!")
+        throw RuntimeError("Failed to create CGContext for \(width)x\(height) RGBA Image!")
       }
       
       // Draw the Image into the CGContext

@@ -5,8 +5,8 @@
 //  Created by Marc Rousavy on 25.07.25.
 //
 
-import UIKit
-import NitroModules
+public import UIKit
+public import NitroModules
 
 private func ceilPixelDimension(_ value: CGFloat) -> CGFloat {
   let rounded = value.rounded()
@@ -44,8 +44,8 @@ public extension NativeImage {
   func toRawPixelData(allowGpu _: Bool?) throws -> RawPixelData {
     return try uiImage.toRawPixelData()
   }
-  func toRawPixelDataAsync(allowGpu: Bool?) -> Promise<RawPixelData> {
-    return Promise.async {
+  func toRawPixelDataAsync(allowGpu: Bool?) -> any Promise<RawPixelData> {
+    return .async {
       return try self.toRawPixelData(allowGpu: allowGpu)
     }
   }
@@ -54,13 +54,13 @@ public extension NativeImage {
     return try uiImage.toEncodedImageData(format: format, quality: quality ?? 100)
   }
 
-  func toEncodedImageDataAsync(format: ImageFormat, quality: Double?) -> Promise<EncodedImageData> {
-    return Promise.async {
+  func toEncodedImageDataAsync(format: ImageFormat, quality: Double?) -> any Promise<EncodedImageData> {
+    return .async {
       return try self.toEncodedImageData(format: format, quality: quality)
     }
   }
 
-  func rotate(degrees: Double, allowFastFlagRotation: Bool?) -> any HybridImageSpec {
+  func rotate(degrees: Double, allowFastFlagRotation: Bool?) throws -> any HybridImageSpec {
     if allowFastFlagRotation == true,
        degrees.truncatingRemainder(dividingBy: 90) == 0,
        let cgImage = uiImage.cgImage {
@@ -68,7 +68,7 @@ public extension NativeImage {
       let steps = Int(degrees / 90.0) // can be negative
       let newOrientation = uiImage.imageOrientation.rotated(byRightAngles: steps)
       let rotated = UIImage(cgImage: cgImage, scale: uiImage.scale, orientation: newOrientation)
-      return HybridImage(uiImage: rotated)
+      return try HybridImage(uiImage: rotated)
     } else {
       // Slow path: we actually rotate using UIGraphicsImageRenderer
       let sourceSize = uiImage.size
@@ -92,21 +92,21 @@ public extension NativeImage {
                           height: sourceSize.height)
         uiImage.draw(in: rect)
       }
-      return HybridImage(uiImage: rotatedImage)
+      return try HybridImage(uiImage: rotatedImage)
     }
   }
-  func rotateAsync(degrees: Double, allowFastFlagRotation: Bool?) -> Promise<any HybridImageSpec> {
-    return Promise.async {
-      return self.rotate(degrees: degrees, allowFastFlagRotation: allowFastFlagRotation)
+  func rotateAsync(degrees: Double, allowFastFlagRotation: Bool?) -> any Promise<any HybridImageSpec> {
+    return .async {
+      return try self.rotate(degrees: degrees, allowFastFlagRotation: allowFastFlagRotation)
     }
   }
 
   func resize(width: Double, height: Double) throws -> any HybridImageSpec {
     guard width > 0 else {
-      throw RuntimeError.error(withMessage: "Width cannot be less than 0! (width: \(width))")
+      throw RuntimeError("Width cannot be less than 0! (width: \(width))")
     }
     guard height > 0 else {
-      throw RuntimeError.error(withMessage: "Height cannot be less than 0! (height: \(height))")
+      throw RuntimeError("Height cannot be less than 0! (height: \(height))")
     }
     let targetSize = CGSize(width: width, height: height)
 
@@ -117,11 +117,11 @@ public extension NativeImage {
       let targetRect = CGRect(origin: .zero, size: targetSize)
       uiImage.draw(in: targetRect)
     }
-    return HybridImage(uiImage: resizedImage)
+    return try HybridImage(uiImage: resizedImage)
   }
 
-  func resizeAsync(width: Double, height: Double) -> Promise<any HybridImageSpec> {
-    return Promise.async {
+  func resizeAsync(width: Double, height: Double) -> any Promise<any HybridImageSpec> {
+    return .async {
       return try self.resize(width: width, height: height)
     }
   }
@@ -130,13 +130,13 @@ public extension NativeImage {
     let targetWidth = endX - startX
     let targetHeight = endY - startY
     guard targetWidth > 0 else {
-      throw RuntimeError.error(withMessage: "Width cannot be less than 0! (startX: \(startX) - endX: \(endX) = \(targetWidth))")
+      throw RuntimeError("Width cannot be less than 0! (startX: \(startX) - endX: \(endX) = \(targetWidth))")
     }
     guard targetHeight > 0 else {
-      throw RuntimeError.error(withMessage: "Height cannot be less than 0! (startY: \(startY) - endY: \(endY) = \(targetHeight))")
+      throw RuntimeError("Height cannot be less than 0! (startY: \(startY) - endY: \(endY) = \(targetHeight))")
     }
     guard let cgImage = uiImage.cgImage else {
-      throw RuntimeError.error(withMessage: "This image does not have an underlying .cgImage!")
+      throw RuntimeError("This image does not have an underlying .cgImage!")
     }
 
     let targetRect = CGRect(x: startX,
@@ -144,26 +144,26 @@ public extension NativeImage {
                             width: targetWidth,
                             height: targetHeight)
     guard let croppedCgImage = cgImage.cropping(to: targetRect) else {
-      throw RuntimeError.error(withMessage: "Failed to crop CGImage to \(targetRect)!")
+      throw RuntimeError("Failed to crop CGImage to \(targetRect)!")
     }
     let croppedUiImage = UIImage(cgImage: croppedCgImage)
-    return HybridImage(uiImage: croppedUiImage)
+    return try HybridImage(uiImage: croppedUiImage)
   }
 
-  func cropAsync(startX: Double, startY: Double, endX: Double, endY: Double) -> Promise<any HybridImageSpec> {
-    return Promise.async {
+  func cropAsync(startX: Double, startY: Double, endX: Double, endY: Double) -> any Promise<any HybridImageSpec> {
+    return .async {
       return try self.crop(startX: startX, startY: startY, endX: endX, endY: endY)
     }
   }
 
-  func mirrorHorizontally() -> any HybridImageSpec {
+  func mirrorHorizontally() throws -> any HybridImageSpec {
     let mirrored = uiImage.withHorizontallyFlippedOrientation()
-    return HybridImage(uiImage: mirrored)
+    return try HybridImage(uiImage: mirrored)
   }
 
-  func mirrorHorizontallyAsync() -> Promise<any HybridImageSpec> {
-    return Promise.async {
-      return mirrorHorizontally()
+  func mirrorHorizontallyAsync() -> any Promise<any HybridImageSpec> {
+    return .async {
+      return try mirrorHorizontally()
     }
   }
 
@@ -175,14 +175,14 @@ public extension NativeImage {
     try data.write(to: url)
   }
 
-  func saveToFileAsync(path: String, format: ImageFormat, quality: Double?) -> Promise<Void> {
-    return Promise.async(.utility) {
+  func saveToFileAsync(path: String, format: ImageFormat, quality: Double?) -> any Promise<Void> {
+    return .async(.utility) {
       try self.saveImage(to: path, format: format, quality: quality ?? 100.0)
     }
   }
 
-  func saveToTemporaryFileAsync(format: ImageFormat, quality: Double?) -> Promise<String> {
-    return Promise.async(.utility) {
+  func saveToTemporaryFileAsync(format: ImageFormat, quality: Double?) -> any Promise<String> {
+    return .async(.utility) {
       let tempDirectory = FileManager.default.temporaryDirectory
       let fileName = "\(UUID().uuidString).\(format.stringValue)"
       let file = tempDirectory.appendingPathComponent(fileName)
@@ -198,15 +198,15 @@ public extension NativeImage {
     return try ArrayBuffer.copy(data: thumbHash)
   }
 
-  func toThumbHashAsync() -> Promise<ArrayBuffer> {
-    return Promise.async {
+  func toThumbHashAsync() -> any Promise<ArrayBuffer> {
+    return .async {
       return try self.toThumbHash()
     }
   }
 
   func renderInto(image newImage: any HybridImageSpec, x: Double, y: Double, width: Double, height: Double) throws -> any HybridImageSpec {
     guard let newImage = newImage as? NativeImage else {
-      throw RuntimeError.error(withMessage: "The given image (\(newImage)) is not a `NativeImage`!")
+      throw RuntimeError("The given image (\(newImage)) is not a `NativeImage`!")
     }
     // 1. Prepare a UIImage rendered
     let format = UIGraphicsImageRendererFormat()
@@ -221,11 +221,11 @@ public extension NativeImage {
       newImage.uiImage.draw(in: rect)
     }
     // 4. Wrap the resulting UIImage in a HybridImage
-    return HybridImage(uiImage: renderedImage)
+    return try HybridImage(uiImage: renderedImage)
   }
 
-  func renderIntoAsync(image newImage: any HybridImageSpec, x: Double, y: Double, width: Double, height: Double) -> Promise<any HybridImageSpec> {
-    return Promise.async {
+  func renderIntoAsync(image newImage: any HybridImageSpec, x: Double, y: Double, width: Double, height: Double) -> any Promise<any HybridImageSpec> {
+    return .async {
       return try self.renderInto(image: newImage, x: x, y: y, width: width, height: height)
     }
   }

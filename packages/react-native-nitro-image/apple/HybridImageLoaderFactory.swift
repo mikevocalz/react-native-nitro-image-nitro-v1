@@ -7,36 +7,41 @@
 
 import NitroModules
 
-class HybridImageLoaderFactory: HybridImageLoaderFactorySpec {
-  private let imageFactory = HybridImageFactory()
+final class HybridImageLoaderFactory: HybridImageLoaderFactorySpec {
+  private let imageFactory: HybridImageFactory
+
+  override init() throws {
+    self.imageFactory = try HybridImageFactory()
+    try super.init()
+  }
 
   func createFileImageLoader(filePath: String) throws -> any HybridImageLoaderSpec {
-    return HybridImageLoader(load: {
+    return try HybridImageLoader(load: {
       try self.imageFactory.loadFromFileAsync(filePath: filePath)
     })
   }
 
   func createResourceImageLoader(name: String) throws -> any HybridImageLoaderSpec {
-    return HybridImageLoader(load: {
+    return try HybridImageLoader(load: {
       try self.imageFactory.loadFromResourcesAsync(name: name)
     })
   }
 
   func createSymbolImageLoader(symbolName: String) throws -> any HybridImageLoaderSpec {
-    return HybridImageLoader(load: {
+    return try HybridImageLoader(load: {
       let image = try self.imageFactory.loadFromSymbol(symbolName: symbolName)
-      return Promise.resolved(withResult: image)
+      return .resolved(with: image)
     })
   }
   
   func createRawPixelDataImageLoader(data: RawPixelData) throws -> any HybridImageLoaderSpec {
-    return HybridImageLoader(load: {
+    return try HybridImageLoader(load: {
       try self.imageFactory.loadFromRawPixelDataAsync(data: data, allowGpu: false)
     })
   }
   
   func createEncodedImageDataImageLoader(data: EncodedImageData) throws -> any HybridImageLoaderSpec {
-    return HybridImageLoader(load: {
+    return try HybridImageLoader(load: {
       try self.imageFactory.loadFromEncodedImageDataAsync(data: data)
     })
   }
