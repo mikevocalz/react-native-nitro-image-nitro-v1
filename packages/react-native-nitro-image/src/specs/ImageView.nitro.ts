@@ -1,8 +1,4 @@
-import type {
-  HybridView,
-  HybridViewMethods,
-  HybridViewProps,
-} from 'react-native-nitro-modules'
+import { Android, Apple, type HybridView } from 'react-native-nitro-modules'
 import type { Image } from './Image.nitro'
 import type { ImageLoader } from './ImageLoader.nitro'
 
@@ -15,7 +11,9 @@ import type { ImageLoader } from './ImageLoader.nitro'
  */
 export type ResizeMode = 'cover' | 'contain' | 'center' | 'stretch'
 
-export interface NativeNitroImageViewProps extends HybridViewProps {
+@Apple({ language: 'swift', implementation: { className: 'HybridImageView' } })
+@Android({ language: 'kotlin', implementation: { className: 'HybridImageView' } })
+export declare class NitroImageView extends HybridView {
   /**
    * Represents the image actually shown in this Image View.
    * - {@linkcode Image}: Shows a specific in-memory {@linkcode Image}
@@ -57,11 +55,9 @@ export interface NativeNitroImageViewProps extends HybridViewProps {
   recyclingKey?: string
 }
 
-export interface NativeNitroImageViewMethods extends HybridViewMethods {
-  // no methods
-}
+export * from '#nitro/NitroImageView'
 
-export type NitroImageView = HybridView<
-  NativeNitroImageViewProps,
-  NativeNitroImageViewMethods
+/** Props of the native `<NitroImageView />` (V1: generated from the {@linkcode NitroImageView} class). */
+export type NativeNitroImageViewProps = Partial<
+  Pick<NitroImageView, 'image' | 'resizeMode' | 'recyclingKey'>
 >

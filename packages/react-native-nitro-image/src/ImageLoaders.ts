@@ -1,8 +1,7 @@
-import { NitroModules } from 'react-native-nitro-modules'
-import type { ImageLoaderFactory } from './specs/ImageLoaderFactory.nitro'
+import 'react-native-nitro-modules'
+import { ImageLoaderFactory } from './specs/ImageLoaderFactory.nitro'
 
 /**
  * A factory for creating `ImageLoader` instances.
  */
-export const ImageLoaders =
-  NitroModules.createHybridObject<ImageLoaderFactory>('ImageLoaderFactory')
+export const ImageLoaders: ImageLoaderFactory = new ImageLoaderFactory()

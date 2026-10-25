@@ -1,33 +1,30 @@
 {
   "name": "react-native-nitro-image",
-  "version": "0.15.2",
+  "version": "0.15.2-nitro-v1.0",
   "description": "A superfast in-memory Image type and view component for React Native, built with Nitro!",
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
-  "types": "lib/typescript/index.d.ts",
+  "main": "src/index",
+  "module": "src/index",
+  "types": "src/index.ts",
   "react-native": "src/index",
   "source": "src/index",
-  "workspaces": [
-    "example"
-  ],
   "files": [
     "src",
     "react-native.config.js",
-    "lib",
     "nitrogen",
     "android/build.gradle",
     "android/gradle.properties",
     "android/fix-prefab.gradle",
     "android/CMakeLists.txt",
     "android/src",
-    "ios/**/*.h",
-    "ios/**/*.m",
-    "ios/**/*.mm",
-    "ios/**/*.cpp",
-    "ios/**/*.swift",
+    "apple/**/*.h",
+    "apple/**/*.m",
+    "apple/**/*.mm",
+    "apple/**/*.cpp",
+    "apple/**/*.swift",
     "app.plugin.js",
     "nitro.json",
     "*.podspec",
+    "Package.swift",
     "README.md"
   ],
   "scripts": {
@@ -36,7 +33,7 @@
     "clean": "rm -rf android/build node_modules/**/android/build lib",
     "release": "release-it",
     "typescript": "tsc",
-    "specs": "tsc && nitrogen --logLevel=\"debug\""
+    "specs": "nitrogen --logLevel=\"debug\" && tsc --noEmit"
   },
   "keywords": [
     "react-native",
@@ -57,36 +54,27 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@types/react": "^19.2.15",
-    "nitrogen": "0.37.0",
-    "react": "19.2.3",
-    "react-native": "0.85.3",
-    "react-native-nitro-modules": "0.37.0",
-    "typescript": "6.0.3"
+    "@types/react": "19.3.0",
+    "nitrogen": "1.0.0-alpha.nightly.100.g107f6fc66597",
+    "react": "19.3.1",
+    "react-native": "0.88.0",
+    "react-native-nitro-modules": "1.0.0-alpha.nightly.100.g107f6fc66597",
+    "typescript": "7.0.2",
+    "nitro-core": "1.0.0-alpha.nightly.100.g107f6fc66597"
   },
   "peerDependencies": {
+    "nitro-core": "*",
     "react": "*",
-    "react-native": "*",
+    "react-native": ">=0.88.0",
     "react-native-nitro-modules": "*"
   },
   "peerDependenciesMeta": {
+    "nitro-core": {
+      "optional": true
+    },
     "react-native-nitro-modules": {
       "optional": true
     }
-  },
-  "react-native-builder-bob": {
-    "source": "src",
-    "output": "lib",
-    "targets": [
-      "commonjs",
-      "module",
-      [
-        "typescript",
-        {
-          "project": "tsconfig.build.json"
-        }
-      ]
-    ]
   },
   "release-it": {
     "npm": {
@@ -100,5 +88,14 @@
       "before:init": "bun typecheck",
       "after:bump": "bun run build"
     }
+  },
+  "imports": {
+    "#nitro/*": "./nitrogen/generated/shared/javascript/*.cjs"
+  },
+  "swiftpmConfig": {
+    "name": "NitroImage",
+    "dependencies": [
+      "react-native-nitro-modules"
+    ]
   }
 }

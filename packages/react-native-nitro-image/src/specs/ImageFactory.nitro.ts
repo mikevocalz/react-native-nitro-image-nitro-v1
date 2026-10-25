@@ -1,4 +1,4 @@
-import type { HybridObject } from 'react-native-nitro-modules'
+import { Android, Apple, type HybridObject } from 'react-native-nitro-modules'
 import type { EncodedImageData, Image, RawPixelData } from './Image.nitro'
 
 /**
@@ -16,8 +16,11 @@ export interface Color {
   a?: number
 }
 
-export interface ImageFactory
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+@Apple({ language: 'swift', implementation: { className: 'HybridImageFactory' } })
+@Android({ language: 'kotlin', implementation: { className: 'HybridImageFactory' } })
+export declare class ImageFactory extends HybridObject {
+  constructor()
+
   /**
    * Synchronously creates a new blank {@linkcode Image} of the given size.
    * @param width The width of the new Image
@@ -128,3 +131,5 @@ export interface ImageFactory
   loadFromThumbHash(thumbhash: ArrayBuffer): Image
   loadFromThumbHashAsync(thumbhash: ArrayBuffer): Promise<Image>
 }
+
+export * from '#nitro/ImageFactory'

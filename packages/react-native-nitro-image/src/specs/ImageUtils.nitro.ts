@@ -1,7 +1,10 @@
-import type { HybridObject } from 'react-native-nitro-modules'
+import { Android, Apple, type HybridObject } from 'react-native-nitro-modules'
 
-export interface ImageUtils
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+@Apple({ language: 'swift', implementation: { className: 'HybridImageUtils' } })
+@Android({ language: 'kotlin', implementation: { className: 'HybridImageUtils' } })
+export declare class ImageUtils extends HybridObject {
+  constructor()
+
   /**
    * Returns `true` when the host platform supports loading Images
    * in `HEIC` format.
@@ -22,3 +25,5 @@ export interface ImageUtils
    */
   thumbhashFromBase64String(thumbhashBase64: string): ArrayBuffer
 }
+
+export * from '#nitro/ImageUtils'

@@ -13,6 +13,9 @@ export function loadImage(source: AsyncImageSource): Promise<Image> | Image {
   if (typeof source === 'number') {
     // It's a require(...) - a `number` which we need to resolve first
     const resolvedSource = RNImage.resolveAssetSource(source)
+    if (resolvedSource == null) {
+      throw new Error(`Cannot resolve asset source ${source}!`)
+    }
     if (resolvedSource.uri.startsWith('http')) {
       // In debug, assets are streamed over the network
       return loadImage({ url: resolvedSource.uri })

@@ -1,9 +1,10 @@
-import type { HybridObject } from 'react-native-nitro-modules'
+import { Android, Apple, type HybridObject } from 'react-native-nitro-modules'
 import type { Image } from './Image.nitro'
 import type { NitroImageView } from './ImageView.nitro'
 
-export interface ImageLoader
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+@Apple({ language: 'swift', allowMultipleImplementations: true })
+@Android({ language: 'kotlin', allowMultipleImplementations: true })
+export declare class ImageLoader extends HybridObject {
   /**
    * Imperatively loads this `Image` using the underlying load implementation.
    */
@@ -22,3 +23,5 @@ export interface ImageLoader
    */
   dropImage(forView: NitroImageView): void
 }
+
+export * from '#nitro/ImageLoader'

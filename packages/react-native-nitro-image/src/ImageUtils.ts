@@ -1,7 +1,7 @@
-import { NitroModules } from 'react-native-nitro-modules'
-import type { ImageUtils } from './specs/ImageUtils.nitro'
+import 'react-native-nitro-modules'
+import { ImageUtils } from './specs/ImageUtils.nitro'
 
-const utils = NitroModules.createHybridObject<ImageUtils>('ImageUtils')
+const utils: ImageUtils = new ImageUtils()
 
 /**
  * Returns `true` when the host platform supports loading Images

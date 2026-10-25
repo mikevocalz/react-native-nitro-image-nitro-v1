@@ -1,4 +1,4 @@
-import type { HybridObject } from 'react-native-nitro-modules'
+import { Android, Apple, type HybridObject } from 'react-native-nitro-modules'
 
 /**
  * Represents the pixel ordering format of the literal bytes in memory.
@@ -63,8 +63,9 @@ export interface EncodedImageData {
 /**
  * A native Image instance.
  */
-export interface Image
-  extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
+@Apple({ language: 'swift', allowMultipleImplementations: true })
+@Android({ language: 'kotlin', allowMultipleImplementations: true })
+export declare class Image extends HybridObject {
   readonly width: number
   readonly height: number
 
@@ -236,3 +237,5 @@ export interface Image
     height: number,
   ): Promise<Image>
 }
+
+export * from '#nitro/Image'
