@@ -19,6 +19,10 @@ import java.nio.ByteBuffer
 @DoNotStrip
 @Keep
 class HybridImageFactory: HybridImageFactorySpec() {
+    companion object : HybridImageFactorySpec.Companion {
+        override fun constructor(): HybridImageFactory = HybridImageFactory()
+    }
+
     override fun createBlankImage(width: Double, height: Double, enableAlpha: Boolean, fill: Color?): HybridImageSpec {
         // 1. Create Bitmap config (either ARGB or RGB without alpha)
         val config = if (enableAlpha) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565

@@ -10,6 +10,10 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 @DoNotStrip
 @Keep
 class HybridImageUtils: HybridImageUtilsSpec() {
+    companion object : HybridImageUtilsSpec.Companion {
+        override fun constructor(): HybridImageUtils = HybridImageUtils()
+    }
+
     override val supportsHeicLoading: Boolean
         get() {
             // Since Android 10, HEIF/HEIC is standard.

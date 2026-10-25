@@ -8,6 +8,10 @@ import com.margelo.nitro.core.Promise
 @Keep
 @DoNotStrip
 class HybridImageLoaderFactory: HybridImageLoaderFactorySpec() {
+    companion object : HybridImageLoaderFactorySpec.Companion {
+        override fun constructor(): HybridImageLoaderFactory = HybridImageLoaderFactory()
+    }
+
     private val factory = HybridImageFactory()
 
     override fun createFileImageLoader(filePath: String): HybridImageLoaderSpec {

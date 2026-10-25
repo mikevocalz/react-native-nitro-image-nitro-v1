@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 @DoNotStrip
 @Keep
 class HybridImageView(context: Context): HybridNitroImageViewSpec(), RecyclableView {
-    companion object {
+    companion object : HybridNitroImageViewSpec.Companion {
         private const val TAG = "HybridImageView"
     }
     private val uiScope = CoroutineScope(Dispatchers.Main.immediate)
