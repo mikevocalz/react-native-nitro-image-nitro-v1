@@ -16,8 +16,11 @@ class HybridImageView: HybridNitroImageViewSpec {
 
   override init() throws {
     try super.init()
+    // Fabric creates views on the main thread, so `self` stays there.
+    nonisolated(unsafe) let delegate = self
+    let imageView = self.view
     MainActor.assumeIsolated {
-      view.delegate = self
+      imageView.delegate = delegate
     }
   }
 

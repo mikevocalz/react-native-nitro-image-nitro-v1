@@ -9,7 +9,9 @@ import Foundation
 import UIKit
 import NitroModules
 
-final class HybridImageFactory: HybridImageFactorySpec {
+// `@unchecked Sendable`: the factory has no stored state. The async variants
+// capture `self` in V1's `sending` Promise.async closures.
+final class HybridImageFactory: HybridImageFactorySpec, @unchecked Sendable {
   /**
    * Create new blank Image
    */
@@ -90,12 +92,12 @@ final class HybridImageFactory: HybridImageFactorySpec {
 
   func loadFromRawPixelDataAsync(data: RawPixelData, allowGpu: Bool?) throws -> any Promise<any HybridImageSpec> {
     let maybeBufferCopy = data.buffer.asOwning()
-    let newData = RawPixelData(buffer: maybeBufferCopy,
-                               width: data.width,
-                               height: data.height,
-                               pixelFormat: data.pixelFormat)
+    let newData = OwnedRawPixelData(value: RawPixelData(buffer: maybeBufferCopy,
+                                                        width: data.width,
+                                                        height: data.height,
+                                                        pixelFormat: data.pixelFormat))
     return .async {
-      return try self.loadFromRawPixelData(data: newData, allowGpu: allowGpu)
+      return try self.loadFromRawPixelData(data: newData.value, allowGpu: allowGpu)
     }
   }
 

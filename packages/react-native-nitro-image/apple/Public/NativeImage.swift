@@ -45,8 +45,9 @@ public extension NativeImage {
     return try uiImage.toRawPixelData()
   }
   func toRawPixelDataAsync(allowGpu: Bool?) -> any Promise<RawPixelData> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async {
-      return try self.toRawPixelData(allowGpu: allowGpu)
+      return try image.toRawPixelData(allowGpu: allowGpu)
     }
   }
 
@@ -55,8 +56,9 @@ public extension NativeImage {
   }
 
   func toEncodedImageDataAsync(format: ImageFormat, quality: Double?) -> any Promise<EncodedImageData> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async {
-      return try self.toEncodedImageData(format: format, quality: quality)
+      return try image.toEncodedImageData(format: format, quality: quality)
     }
   }
 
@@ -96,8 +98,9 @@ public extension NativeImage {
     }
   }
   func rotateAsync(degrees: Double, allowFastFlagRotation: Bool?) -> any Promise<any HybridImageSpec> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async {
-      return try self.rotate(degrees: degrees, allowFastFlagRotation: allowFastFlagRotation)
+      return try image.rotate(degrees: degrees, allowFastFlagRotation: allowFastFlagRotation)
     }
   }
 
@@ -121,8 +124,9 @@ public extension NativeImage {
   }
 
   func resizeAsync(width: Double, height: Double) -> any Promise<any HybridImageSpec> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async {
-      return try self.resize(width: width, height: height)
+      return try image.resize(width: width, height: height)
     }
   }
 
@@ -151,8 +155,9 @@ public extension NativeImage {
   }
 
   func cropAsync(startX: Double, startY: Double, endX: Double, endY: Double) -> any Promise<any HybridImageSpec> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async {
-      return try self.crop(startX: startX, startY: startY, endX: endX, endY: endY)
+      return try image.crop(startX: startX, startY: startY, endX: endX, endY: endY)
     }
   }
 
@@ -162,8 +167,9 @@ public extension NativeImage {
   }
 
   func mirrorHorizontallyAsync() -> any Promise<any HybridImageSpec> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async {
-      return try mirrorHorizontally()
+      return try image.mirrorHorizontally()
     }
   }
 
@@ -176,19 +182,21 @@ public extension NativeImage {
   }
 
   func saveToFileAsync(path: String, format: ImageFormat, quality: Double?) -> any Promise<Void> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async(.utility) {
-      try self.saveImage(to: path, format: format, quality: quality ?? 100.0)
+      try image.saveImage(to: path, format: format, quality: quality ?? 100.0)
     }
   }
 
   func saveToTemporaryFileAsync(format: ImageFormat, quality: Double?) -> any Promise<String> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async(.utility) {
       let tempDirectory = FileManager.default.temporaryDirectory
       let fileName = "\(UUID().uuidString).\(format.stringValue)"
       let file = tempDirectory.appendingPathComponent(fileName)
       let path = file.path
 
-      try self.saveImage(to: path, format: format, quality: quality ?? 100.0)
+      try image.saveImage(to: path, format: format, quality: quality ?? 100.0)
       return path
     }
   }
@@ -199,8 +207,9 @@ public extension NativeImage {
   }
 
   func toThumbHashAsync() -> any Promise<ArrayBuffer> {
+    let image = NativeImageSnapshot(uiImage: uiImage)
     return .async {
-      return try self.toThumbHash()
+      return try image.toThumbHash()
     }
   }
 
@@ -225,8 +234,13 @@ public extension NativeImage {
   }
 
   func renderIntoAsync(image newImage: any HybridImageSpec, x: Double, y: Double, width: Double, height: Double) -> any Promise<any HybridImageSpec> {
+    guard let newNativeImage = newImage as? NativeImage else {
+      return .rejected(with: RuntimeError("The given image (\(newImage)) is not a `NativeImage`!"))
+    }
+    let image = NativeImageSnapshot(uiImage: uiImage)
+    let overlay = NativeImageSnapshot(uiImage: newNativeImage.uiImage)
     return .async {
-      return try self.renderInto(image: newImage, x: x, y: y, width: width, height: height)
+      return try image.renderInto(image: HybridImage(uiImage: overlay.uiImage), x: x, y: y, width: width, height: height)
     }
   }
 }
