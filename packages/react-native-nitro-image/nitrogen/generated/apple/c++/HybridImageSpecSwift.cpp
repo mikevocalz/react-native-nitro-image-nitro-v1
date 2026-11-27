@@ -29,8 +29,8 @@ namespace margelo::nitro::image {
   // Methods
 
   ::NitroImage::RawPixelData HybridImageSpecSwift::toRawPixelData(const swift::Optional<bool>& allowGpu) {
-    auto __result = withSwiftResult<::NitroImage::RawPixelData>([&](void* __outResult) {
-      return _swiftPart.toRawPixelData(allowGpu, __outResult);
+    auto __result = receiveSwiftResult<::NitroImage::RawPixelData>([&](const void* __onResult) {
+      return _swiftPart.toRawPixelData(allowGpu, __onResult);
     });
     if (__result.hasError()) [[unlikely]] {
       std::rethrow_exception(__result.error());
@@ -49,8 +49,8 @@ namespace margelo::nitro::image {
   }
 
   ::NitroImage::EncodedImageData HybridImageSpecSwift::toEncodedImageData(::NitroImage::ImageFormat format, const swift::Optional<double>& quality) {
-    auto __result = withSwiftResult<::NitroImage::EncodedImageData>([&](void* __outResult) {
-      return _swiftPart.toEncodedImageData(format, quality, __outResult);
+    auto __result = receiveSwiftResult<::NitroImage::EncodedImageData>([&](const void* __onResult) {
+      return _swiftPart.toEncodedImageData(format, quality, __onResult);
     });
     if (__result.hasError()) [[unlikely]] {
       std::rethrow_exception(__result.error());

@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!node_modules"]
+    "includes": [
+      "**",
+      "!node_modules",
+      "!example/ios",
+      "!example/android",
+      "!**/nitrogen/generated",
+      "!**/*.nitro.ts"
+    ]
   },
   "formatter": {
     "enabled": true,

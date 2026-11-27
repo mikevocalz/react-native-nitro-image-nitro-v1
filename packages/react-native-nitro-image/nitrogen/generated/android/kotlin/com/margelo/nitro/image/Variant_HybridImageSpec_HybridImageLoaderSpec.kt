@@ -56,17 +56,9 @@ sealed class Variant_HybridImageSpec_HybridImageLoaderSpec private constructor(@
     @JvmName("createFirst")
     @DoNotStrip
     fun create(value: HybridImageSpec): Variant_HybridImageSpec_HybridImageLoaderSpec = First(value)
-
-    @JvmStatic
-    @DoNotStrip
-    private fun fromCpp_0(value: HybridImageSpec): Variant_HybridImageSpec_HybridImageLoaderSpec = First(value)
     @JvmStatic
     @JvmName("createSecond")
     @DoNotStrip
     fun create(value: HybridImageLoaderSpec): Variant_HybridImageSpec_HybridImageLoaderSpec = Second(value)
-
-    @JvmStatic
-    @DoNotStrip
-    private fun fromCpp_1(value: HybridImageLoaderSpec): Variant_HybridImageSpec_HybridImageLoaderSpec = Second(value)
   }
 }

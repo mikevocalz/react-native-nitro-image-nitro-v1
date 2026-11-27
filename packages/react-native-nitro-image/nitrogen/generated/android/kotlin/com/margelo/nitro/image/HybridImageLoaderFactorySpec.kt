@@ -94,8 +94,7 @@ abstract class HybridImageLoaderFactorySpec: HybridObject() {
     @DoNotStrip
     @Keep
     private fun constructor_cxx(): HybridImageLoaderFactorySpec {
-      val __result = HybridImageLoaderFactory.constructor()
-      return __result
+      return HybridImageLoaderFactory.constructor()
     }
   }
 }

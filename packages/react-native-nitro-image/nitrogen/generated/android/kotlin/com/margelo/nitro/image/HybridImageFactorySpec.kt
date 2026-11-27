@@ -128,8 +128,7 @@ abstract class HybridImageFactorySpec: HybridObject() {
     @DoNotStrip
     @Keep
     private fun constructor_cxx(): HybridImageFactorySpec {
-      val __result = HybridImageFactory.constructor()
-      return __result
+      return HybridImageFactory.constructor()
     }
   }
 }

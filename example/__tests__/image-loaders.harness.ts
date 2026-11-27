@@ -1,7 +1,6 @@
 import { Platform } from 'react-native'
 import { describe, expect, it } from 'react-native-harness'
 import { Images, loadImage } from 'react-native-nitro-image'
-import { WebImages } from 'react-native-nitro-web-image'
 
 const RED = { r: 1, g: 0, b: 0, a: 1 }
 const GREEN = { r: 0, g: 1, b: 0, a: 1 }
@@ -111,35 +110,6 @@ describe('Images.loadFromThumbHash', () => {
     const decoded = await Images.loadFromThumbHashAsync(hash)
     expect(decoded.width).toBeGreaterThan(0)
     expect(decoded.height).toBeGreaterThan(0)
-  })
-})
-
-describe('WebImages.loadFromURLAsync', () => {
-  const REMOTE_PNG_URL =
-    'https://raw.githubusercontent.com/mrousavy/react-native-nitro-image/main/img/banner-light.png'
-  const REMOTE_PNG_WIDTH = 1326
-  const REMOTE_PNG_HEIGHT = 336
-
-  it('downloads and decodes an image from a URL with the expected dimensions', async () => {
-    const image = await WebImages.loadFromURLAsync(REMOTE_PNG_URL)
-    expect(image.width).toBe(REMOTE_PNG_WIDTH)
-    expect(image.height).toBe(REMOTE_PNG_HEIGHT)
-  })
-
-  it('rejects when the URL is unreachable', async () => {
-    await expect(
-      WebImages.loadFromURLAsync('https://pikachu.missing/hello.png'),
-    ).rejects.toBeDefined()
-  })
-})
-
-describe('loadImage with { url }', () => {
-  it('resolves a URL source through the high-level loader', async () => {
-    const image = await loadImage({
-      url: 'https://raw.githubusercontent.com/mrousavy/react-native-nitro-image/main/img/banner-light.png',
-    })
-    expect(image.width).toBe(1326)
-    expect(image.height).toBe(336)
   })
 })
 

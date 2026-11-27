@@ -29,8 +29,8 @@ namespace margelo::nitro::image {
   // Methods
 
   swift::String HybridImageUtilsSpecSwift::thumbHashToBase64String(const ArrayBuffer& thumbhash) {
-    auto __result = withSwiftResult<swift::String>([&](void* __outResult) {
-      return _swiftPart.thumbHashToBase64String(thumbhash, __outResult);
+    auto __result = receiveSwiftResult<swift::String>([&](const void* __onResult) {
+      return _swiftPart.thumbHashToBase64String(thumbhash, __onResult);
     });
     if (__result.hasError()) [[unlikely]] {
       std::rethrow_exception(__result.error());

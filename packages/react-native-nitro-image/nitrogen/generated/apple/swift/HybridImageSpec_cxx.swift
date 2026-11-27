@@ -7,6 +7,7 @@
 internal import NitroModules
 internal import CxxStdlib
 internal import NitroImageAppleCxx
+internal import NitroModulesAppleCxx
 
 /**
  * A class implementation that bridges HybridImageSpec over to C++.
@@ -136,10 +137,12 @@ public final class HybridImageSpec_cxx {
 
   // Methods
 
-  public final func toRawPixelData(allowGpu: Bool?, __outResult: UnsafeMutableRawPointer) -> bridge.Result_void {
+  public final func toRawPixelData(allowGpu: Bool?, __onResult: UnsafeRawPointer) -> bridge.Result_void {
     do {
       let value = try __implementation.toRawPixelData(allowGpu: allowGpu)
-      __outResult.assumingMemoryBound(to: RawPixelData.self).initialize(to: value)
+      withUnsafePointer(to: value) { pointer in
+        margelo.nitro.SwiftResultConsumer.consume(__onResult, UnsafeRawPointer(pointer))
+      }
       return bridge.Result_void.withValue()
     } catch {
       return bridge.Result_void.withError(error.toCpp())
@@ -156,10 +159,12 @@ public final class HybridImageSpec_cxx {
     }
   }
 
-  public final func toEncodedImageData(format: ImageFormat, quality: Double?, __outResult: UnsafeMutableRawPointer) -> bridge.Result_void {
+  public final func toEncodedImageData(format: ImageFormat, quality: Double?, __onResult: UnsafeRawPointer) -> bridge.Result_void {
     do {
       let value = try __implementation.toEncodedImageData(format: format, quality: quality)
-      __outResult.assumingMemoryBound(to: EncodedImageData.self).initialize(to: value)
+      withUnsafePointer(to: value) { pointer in
+        margelo.nitro.SwiftResultConsumer.consume(__onResult, UnsafeRawPointer(pointer))
+      }
       return bridge.Result_void.withValue()
     } catch {
       return bridge.Result_void.withError(error.toCpp())

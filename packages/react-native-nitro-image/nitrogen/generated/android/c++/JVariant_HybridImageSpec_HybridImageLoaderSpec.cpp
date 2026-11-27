@@ -19,7 +19,7 @@ namespace margelo::nitro::image {
   }
 
   jni::local_ref<JVariant_HybridImageSpec_HybridImageLoaderSpec> JVariant_HybridImageSpec_HybridImageLoaderSpec_impl::First::create(jni::alias_ref<JHybridImageSpecJavaPart> value) {
-    static const auto method = JVariant_HybridImageSpec_HybridImageLoaderSpec::javaClassStatic()->getStaticMethod<jni::local_ref<JVariant_HybridImageSpec_HybridImageLoaderSpec>(jni::alias_ref<JHybridImageSpecJavaPart>)>("fromCpp_0");
+    static const auto method = JVariant_HybridImageSpec_HybridImageLoaderSpec::javaClassStatic()->getStaticMethod<jni::local_ref<JVariant_HybridImageSpec_HybridImageLoaderSpec>(jni::alias_ref<JHybridImageSpecJavaPart>)>("createFirst");
     return method(JVariant_HybridImageSpec_HybridImageLoaderSpec::javaClassStatic(), value);
   }
 
@@ -29,7 +29,7 @@ namespace margelo::nitro::image {
   }
 
   jni::local_ref<JVariant_HybridImageSpec_HybridImageLoaderSpec> JVariant_HybridImageSpec_HybridImageLoaderSpec_impl::Second::create(jni::alias_ref<JHybridImageLoaderSpecJavaPart> value) {
-    static const auto method = JVariant_HybridImageSpec_HybridImageLoaderSpec::javaClassStatic()->getStaticMethod<jni::local_ref<JVariant_HybridImageSpec_HybridImageLoaderSpec>(jni::alias_ref<JHybridImageLoaderSpecJavaPart>)>("fromCpp_1");
+    static const auto method = JVariant_HybridImageSpec_HybridImageLoaderSpec::javaClassStatic()->getStaticMethod<jni::local_ref<JVariant_HybridImageSpec_HybridImageLoaderSpec>(jni::alias_ref<JHybridImageLoaderSpecJavaPart>)>("createSecond");
     return method(JVariant_HybridImageSpec_HybridImageLoaderSpec::javaClassStatic(), value);
   }
 

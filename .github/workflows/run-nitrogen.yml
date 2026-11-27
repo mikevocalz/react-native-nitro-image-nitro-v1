@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - nitro-v1
     paths:
       - '.github/workflows/run-nitrogen.yml'
       - 'src/specs/**'
@@ -30,11 +31,11 @@ jobs:
       - name: Build the typescript types
         run: bun run build
 
+      - name: Typecheck
+        run: bun run typecheck
+
       - name: Run nitrogen for NitroImage
         run: bun image specs
-
-      - name: Run nitrogen for NitroWebImage
-        run: bun web-image specs
 
       - name: Verify no files have changed after nitrogen
         run: git diff --exit-code HEAD -- . ':(exclude)bun.lockb' ':(exclude)bun.lock'

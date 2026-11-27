@@ -89,8 +89,7 @@ abstract class HybridImageUtilsSpec: HybridObject() {
     @DoNotStrip
     @Keep
     private fun constructor_cxx(): HybridImageUtilsSpec {
-      val __result = HybridImageUtils.constructor()
-      return __result
+      return HybridImageUtils.constructor()
     }
   }
 }

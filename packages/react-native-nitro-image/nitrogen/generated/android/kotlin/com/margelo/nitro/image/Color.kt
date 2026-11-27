@@ -9,7 +9,6 @@ package com.margelo.nitro.image
 
 import androidx.annotation.Keep
 import com.facebook.proguard.annotations.DoNotStrip
-import java.util.Objects
 
 
 /**
@@ -31,24 +30,21 @@ data class Color(
   @Keep
   val a: Double?
 ) {
-
-
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Color) return false
-    return Objects.deepEquals(this.r, other.r)
-      && Objects.deepEquals(this.g, other.g)
-      && Objects.deepEquals(this.b, other.b)
-      && Objects.deepEquals(this.a, other.a)
+    return this.r.toBits() == other.r.toBits()
+      && this.g.toBits() == other.g.toBits()
+      && this.b.toBits() == other.b.toBits()
+      && (this.a == null && other.a == null || this.a != null && other.a != null && this.a.toBits() == other.a.toBits())
   }
 
   override fun hashCode(): Int {
-    return arrayOf<Any?>(
-      r,
-      g,
-      b,
-      a
-    ).contentDeepHashCode()
+    var result = this.r.hashCode()
+    result = 31 * result + this.g.hashCode()
+    result = 31 * result + this.b.hashCode()
+    result = 31 * result + (if (this.a != null) this.a.hashCode() else 0)
+    return result
   }
 
   companion object {
