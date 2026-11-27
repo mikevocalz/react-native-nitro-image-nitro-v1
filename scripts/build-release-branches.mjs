@@ -55,12 +55,14 @@ const outDir = resolve(
 )
 
 function run(cmd, cmdArgs, opts = {}) {
-  return execFileSync(cmd, cmdArgs, {
+  // With inherited stdout, execFileSync returns null.
+  const out = execFileSync(cmd, cmdArgs, {
     cwd: ROOT,
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'inherit'],
     ...opts,
-  }).trim()
+  })
+  return (out ?? '').trim()
 }
 const git = (gitArgs, opts) => run('git', gitArgs, opts)
 const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'))
