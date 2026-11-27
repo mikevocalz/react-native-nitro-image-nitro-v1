@@ -1,0 +1,4 @@
+import { type AsyncImageSource } from './AsyncImageSource';
+import type { Image } from './specs/Image.nitro';
+import type { ImageLoader } from './specs/ImageLoader.nitro';
+export declare function createImageLoader(source: AsyncImageSource): ImageLoader | Image;

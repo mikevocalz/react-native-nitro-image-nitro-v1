@@ -1,0 +1,3 @@
+import { type AsyncImageSource } from './AsyncImageSource';
+import type { Image } from './specs/Image.nitro';
+export declare function loadImage(source: AsyncImageSource): Promise<Image> | Image;

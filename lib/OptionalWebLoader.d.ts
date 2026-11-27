@@ -1,0 +1,5 @@
+type WebImagesType = typeof import('react-native-nitro-web-image')['WebImages'];
+type OptionalWebImagesType = Pick<WebImagesType, 'createWebImageLoader' | 'loadFromURLAsync'>;
+export type OptionalAsyncOptions = Parameters<WebImagesType['loadFromURLAsync']>[1];
+export declare const OptionalWebImages: OptionalWebImagesType;
+export {};

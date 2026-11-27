@@ -1,0 +1,13 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "environment": "react-native",
+  "cxxNamespace": ["image"],
+  "apple": {
+    "moduleName": "NitroImage"
+  },
+  "android": {
+    "namespace": ["image"],
+    "cxxLibName": "NitroImage"
+  },
+  "ignorePaths": ["**/node_modules"]
+}

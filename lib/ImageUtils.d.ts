@@ -1,0 +1,13 @@
+import 'react-native-nitro-modules';
+/**
+ * Returns `true` when the host platform supports loading Images
+ * in `HEIC` format.
+ */
+export declare const supportsHeicLoading: boolean;
+/**
+ * Returns `true` when the host platform supports writing Images
+ * in `HEIC` format.
+ */
+export declare const supportsHeicWriting: boolean;
+export declare const thumbHashToBase64String: (thumbhash: ArrayBuffer) => string;
+export declare const thumbHashFromBase64String: (thumbhashBase64: string) => ArrayBuffer;

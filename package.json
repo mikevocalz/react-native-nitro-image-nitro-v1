@@ -1,0 +1,74 @@
+{
+  "name": "react-native-nitro-image",
+  "version": "0.15.2-nitro-v1.1",
+  "description": "A superfast in-memory Image type and view component for React Native, built with Nitro!",
+  "main": "lib/index",
+  "module": "lib/index",
+  "types": "lib/index.d.ts",
+  "react-native": "lib/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "react-native.config.js",
+    "nitrogen",
+    "android/build.gradle",
+    "android/gradle.properties",
+    "android/fix-prefab.gradle",
+    "android/CMakeLists.txt",
+    "android/src",
+    "apple/**/*.h",
+    "apple/**/*.m",
+    "apple/**/*.mm",
+    "apple/**/*.cpp",
+    "apple/**/*.swift",
+    "app.plugin.js",
+    "nitro.json",
+    "*.podspec",
+    "Package.swift",
+    "README.md"
+  ],
+  "keywords": [
+    "react-native",
+    "nitro"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrousavy/react-native-nitro-image.git",
+    "directory": "packages/react-native-nitro-image"
+  },
+  "author": "Marc Rousavy <me@mrousavy.com> (https://github.com/mrousavy)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrousavy/react-native-nitro-image/issues"
+  },
+  "homepage": "https://github.com/mrousavy/react-native-nitro-image#readme",
+  "peerDependencies": {
+    "nitro-core": "*",
+    "react": "*",
+    "react-native": ">=0.88.0",
+    "react-native-nitro-modules": "*"
+  },
+  "peerDependenciesMeta": {
+    "nitro-core": {
+      "optional": true
+    },
+    "react-native-nitro-modules": {
+      "optional": true
+    }
+  },
+  "imports": {
+    "#nitro/*": "./nitrogen/generated/shared/javascript/*.cjs"
+  },
+  "swiftpmConfig": {
+    "name": "NitroImage",
+    "dependencies": [
+      "react-native-nitro-modules"
+    ]
+  },
+  "gitHead": "7f125f33febfa56ea895b63027bd44003a987eee",
+  "nitroV1": {
+    "sourceCommit": "7f125f33febfa56ea895b63027bd44003a987eee",
+    "nitroVersion": "1.0.0-alpha.nightly.138.g43e09c161101"
+  }
+}

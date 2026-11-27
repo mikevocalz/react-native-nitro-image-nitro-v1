@@ -1,0 +1,81 @@
+{
+  "version": 2,
+  "classes": {
+    "Image": {
+      "android": {
+        "allowMultipleImplementations": true,
+        "language": "kotlin"
+      },
+      "apple": {
+        "allowMultipleImplementations": true,
+        "language": "swift"
+      }
+    },
+    "ImageFactory": {
+      "android": {
+        "implementation": {
+          "className": "HybridImageFactory"
+        },
+        "language": "kotlin"
+      },
+      "apple": {
+        "implementation": {
+          "className": "HybridImageFactory"
+        },
+        "language": "swift"
+      }
+    },
+    "ImageLoader": {
+      "android": {
+        "allowMultipleImplementations": true,
+        "language": "kotlin"
+      },
+      "apple": {
+        "allowMultipleImplementations": true,
+        "language": "swift"
+      }
+    },
+    "ImageLoaderFactory": {
+      "android": {
+        "implementation": {
+          "className": "HybridImageLoaderFactory"
+        },
+        "language": "kotlin"
+      },
+      "apple": {
+        "implementation": {
+          "className": "HybridImageLoaderFactory"
+        },
+        "language": "swift"
+      }
+    },
+    "ImageUtils": {
+      "android": {
+        "implementation": {
+          "className": "HybridImageUtils"
+        },
+        "language": "kotlin"
+      },
+      "apple": {
+        "implementation": {
+          "className": "HybridImageUtils"
+        },
+        "language": "swift"
+      }
+    },
+    "NitroImageView": {
+      "android": {
+        "implementation": {
+          "className": "HybridImageView"
+        },
+        "language": "kotlin"
+      },
+      "apple": {
+        "implementation": {
+          "className": "HybridImageView"
+        },
+        "language": "swift"
+      }
+    }
+  }
+}

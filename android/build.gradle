@@ -1,0 +1,171 @@
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "com.android.tools.build:gradle:9.3.1"
+  }
+}
+
+def reactNativeArchitectures() {
+  def value = rootProject.getProperties().get("reactNativeArchitectures")
+  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+}
+
+apply plugin: "com.android.library"
+apply plugin: 'org.jetbrains.kotlin.android'
+apply from: '../nitrogen/generated/android/NitroImage+autolinking.gradle'
+apply from: "./fix-prefab.gradle"
+
+// Nitro V1 requires the New Architecture.
+apply plugin: "com.facebook.react"
+
+def getExtOrDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["NitroImage_" + name]
+}
+
+def getExtOrIntegerDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["NitroImage_" + name]).toInteger()
+}
+
+android {
+  namespace "com.margelo.nitro.image"
+
+  /*
+    Same exclusion as the vision-camera patch, and for the same reason: with no
+    `codegenConfig` in package.json, React Native's gradle plugin generates
+    React's own core view-manager delegates and module specs into this module.
+    This library is Nitro-based and imports none of them, but two libraries
+    each compiling a copy makes the app's dex merge fail with
+    "Type ... is defined multiple times". react-android provides them at
+    runtime; a library must not ship them.
+  */
+  sourceSets {
+    main {
+      java {
+        exclude 'com/facebook/react/viewmanagers/**'
+        exclude 'com/facebook/fbreact/specs/**'
+      }
+    }
+  }
+
+  ndkVersion getExtOrDefault("ndkVersion")
+  compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
+
+  defaultConfig {
+    minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+
+    externalNativeBuild {
+      cmake {
+        cppFlags "-frtti -fexceptions -Wall -Wextra -fstack-protector-all"
+        arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+        abiFilters (*reactNativeArchitectures())
+
+        buildTypes {
+          debug {
+            cppFlags "-O1 -g"
+          }
+          release {
+            cppFlags "-O2"
+          }
+        }
+      }
+    }
+  }
+
+  externalNativeBuild {
+    cmake {
+      path "CMakeLists.txt"
+    }
+  }
+
+  packagingOptions {
+    excludes = [
+            "META-INF",
+            "META-INF/**",
+            "**/libc++_shared.so",
+            "**/libfbjni.so",
+            "**/libjsi.so",
+            "**/libfolly_json.so",
+            "**/libfolly_runtime.so",
+            "**/libglog.so",
+            "**/libhermes.so",
+            "**/libhermes-executor-debug.so",
+            "**/libhermes_executor.so",
+            "**/libreactnative.so",
+            "**/libreactnativejni.so",
+            "**/libturbomodulejsijni.so",
+            "**/libreact_nativemodule_core.so",
+            "**/libjscexecutor.so"
+    ]
+  }
+
+  buildFeatures {
+    buildConfig true
+    prefab true
+    prefabPublishing true
+  }
+
+  prefab {
+    NitroImage {
+      headers "${project.buildDir}/headers/nitroimage/"
+    }
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  lintOptions {
+    disable "GradleCompatible"
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  sourceSets {
+    main {
+      java.srcDirs += ["${project.buildDir}/generated/source/codegen/java"]
+    }
+  }
+}
+
+repositories {
+  mavenCentral()
+  google()
+}
+
+
+dependencies {
+  // The React Native Gradle plugin supplies the version. compileOnly (MoyoLearn
+  // patch): the app already ships react-android, a library must not.
+  compileOnly "com.facebook.react:react-android"
+
+  // Add a dependency on NitroModules
+  implementation project(":react-native-nitro-modules")
+}
+
+// Nitro V1 headers are namespaced (<NitroImage/private/JHybridImageSpec.hpp>).
+// Publish the generated include trees as-is so dependents such as
+// react-native-vision-camera can include and link HybridImageSpec.
+tasks.register('prepareHeaders', Sync) {
+  from('../nitrogen/generated/shared/c++/include') { include '**/*.hpp' }
+  from('../nitrogen/generated/android/c++/include') { include '**/*.hpp' }
+  from('../nitrogen/generated/android/include') { include '**/*.hpp' }
+  from('./src/main/cpp') {
+    include '**/*.hpp'
+    eachFile { path = "NitroImage/${name}" }
+  }
+  into "${project.buildDir}/headers/nitroimage/"
+  includeEmptyDirs = false
+  duplicatesStrategy = DuplicatesStrategy.FAIL
+}
+
+preBuild.dependsOn(prepareHeaders)
