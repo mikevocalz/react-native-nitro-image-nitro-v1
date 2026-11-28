@@ -25,6 +25,7 @@
     "app.plugin.js",
     "nitro.json",
     "*.podspec",
+    "nitro_v1_cocoapods.rb",
     "Package.swift",
     "README.md"
   ],
